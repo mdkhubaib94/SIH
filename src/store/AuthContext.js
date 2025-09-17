@@ -8,67 +8,69 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [hasOnboarded, setHasOnboarded] = useState(false);
+
+    useEffect(() => {
+      const bootstrapAsync = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          const role = await AsyncStorage.getItem('userRole');
+          // --- CHECK ONBOARDING STATUS ---
+          const onboarded = await AsyncStorage.getItem('hasOnboarded');
+
+          if (token && role) {
+            setUserToken(token);
+            setUserRole(role);
+          }
+          if (onboarded === 'true') {
+            setHasOnboarded(true);
+          }
+        } catch (e) {
+          console.error('Restoring state failed', e);
+        }
+        setIsLoading(false);
+      };
+      bootstrapAsync();
+    }, []);
 
   const authContextValue = useMemo(() => ({
-    // The signIn function now takes credentials and calls the API
     signIn: async (email, password, role) => {
-      setIsLoading(true);
+      // No need to set isLoading here for a smoother transition
       try {
-        // This is where you would call your actual API
-        // For now, we'll simulate a successful login
-        // const { token } = await loginUser({ email, password });
-        const fakeToken = 'dummy-auth-token'; // Replace with actual token from API
-        
+        const fakeToken = 'dummy-auth-token';
         await AsyncStorage.setItem('userToken', fakeToken);
         await AsyncStorage.setItem('userRole', role);
-        
         setUserToken(fakeToken);
         setUserRole(role);
       } catch (error) {
         console.error('Sign in failed:', error);
-        // Here you can handle login errors, e.g., show a message to the user
-      } finally {
-        setIsLoading(false);
       }
     },
     signOut: async () => {
-      setIsLoading(true);
+      // No need to set isLoading here
       try {
         await AsyncStorage.removeItem('userToken');
         await AsyncStorage.removeItem('userRole');
-        setUserToken(null);
-        setUserRole(null);
       } catch (error) {
         console.error('Sign out failed:', error);
-      } finally {
-        setIsLoading(false);
+      }
+      // Set tokens to null AFTER storage is cleared
+      setUserToken(null);
+      setUserRole(null);
+    },
+    completeOnboarding: async () => {
+      try {
+        await AsyncStorage.setItem('hasOnboarded', 'true');
+        setHasOnboarded(true);
+      } catch (e) {
+        console.error('Failed to save onboarding status', e);
       }
     },
     userToken,
     userRole,
     isLoading,
-  }), [userToken, userRole, isLoading]);
-
-  // This effect checks for a stored token when the app starts
-  useEffect(() => {
-    const bootstrapAsync = async () => {
-      let token;
-      let role;
-      try {
-        token = await AsyncStorage.getItem('userToken');
-        role = await AsyncStorage.getItem('userRole');
-        if (token && role) {
-            setUserToken(token);
-            setUserRole(role);
-        }
-      } catch (e) {
-        console.error('Restoring token failed', e);
-      }
-      setIsLoading(false);
-    };
-
-    bootstrapAsync();
-  }, []);
+    hasOnboarded, // --- EXPOSE NEW STATE ---
+  }), [userToken, userRole, isLoading, hasOnboarded]);
 
   return (
     <AuthContext.Provider value={authContextValue}>

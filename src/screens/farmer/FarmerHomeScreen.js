@@ -12,7 +12,7 @@ export default function FarmerHomeScreen({ navigation }) {
           <Button
             icon="plus-circle"
             mode="contained"
-            onPress={() => console.log('Navigate to Add Produce Form')}
+            onPress={() => navigation.navigate('AddProduce')}
             style={styles.button}
           >
             Add New Produce

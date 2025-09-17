@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react'; // 1. Import useContext
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Button, Card, Text, Title, List } from 'react-native-paper';
+import { AuthContext } from '../../store/AuthContext'; // 2. Import AuthContext
 
 export default function ProfileScreen({ navigation }) {
+  // 3. Get the signOut function from our context
+  const { signOut, userRole } = useContext(AuthContext);
+
   // In a real app, user data would come from context or props
-  const user = { name: 'John Doe', role: 'Farmer', email: 'john.d@farm.com' };
+  const user = { name: 'John Doe', role: userRole, email: 'john.d@farm.com' };
 
   return (
     <View style={styles.container}>
@@ -37,7 +41,7 @@ export default function ProfileScreen({ navigation }) {
 
       <Button
         mode="contained"
-        onPress={() => console.log('Logging out')}
+        onPress={signOut} // 4. Call the actual signOut function
         style={styles.logoutButton}
         icon="logout"
       >

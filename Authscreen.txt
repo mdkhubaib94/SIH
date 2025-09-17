@@ -1,27 +1,20 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, TextInput, Text, SegmentedButtons } from 'react-native-paper';
-import { AuthContext } from '../../store/AuthContext'; // Import the AuthContext
 
+// This is a simplified version. In a real app, fields would change based on role.
 export default function AuthScreen({ route, navigation }) {
   const { role } = route.params;
-  const { signIn } = useContext(AuthContext); // Get the signIn function from context
-
   const [mode, setMode] = useState('login'); // 'login' or 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState(''); // For registration
 
-  // This function now calls our simulated login
   const handleAuth = () => {
-    if (mode === 'login') {
-      // It doesn't matter what you type for email/password,
-      // the signIn function is hardcoded to succeed for testing.
-      signIn(email, password, role);
-    } else {
-      // TODO: Implement registration logic
-      console.log(`Registering as ${role} with email: ${email}`);
-    }
+    // TODO: Implement Firebase/API authentication
+    // On success, navigate to the correct dashboard
+    console.log(`Attempting ${mode} for ${role} with email: ${email}`);
+    // navigation.replace('FarmerDashboard'); // Example navigation
   };
 
   return (

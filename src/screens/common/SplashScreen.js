@@ -1,16 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
-export default function SplashScreen({ navigation }) {
+export default function SplashScreen() {
   const theme = useTheme();
-
-  useEffect(() => {
-    // Simulate loading and then navigate
-    setTimeout(() => {
-      navigation.replace('Onboarding'); // Or 'RoleSelection' if you skip onboarding
-    }, 2000);
-  }, [navigation]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.primaryContainer }]}>

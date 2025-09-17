@@ -1,6 +1,8 @@
+import React, { useContext } from 'react'; // Import useContext
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Text } from 'react-native-paper';
+import { AuthContext } from '../../store/AuthContext'; // Import AuthContext
 
 const { width } = Dimensions.get('window');
 
@@ -11,6 +13,15 @@ const slides = [
 ];
 
 export default function OnboardingScreen({ navigation }) {
+  const { completeOnboarding } = useContext(AuthContext);
+
+  const handleGetStarted = () => {
+    // Call the function to set the flag
+    completeOnboarding();
+    // Then navigate as usual
+    navigation.replace('RoleSelection');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -32,7 +43,7 @@ export default function OnboardingScreen({ navigation }) {
       </ScrollView>
       <Button
         mode="contained"
-        onPress={() => navigation.replace('RoleSelection')}
+        onPress={handleGetStarted} 
         style={styles.button}
       >
         Get Started
