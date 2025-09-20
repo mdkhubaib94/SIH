@@ -1,6 +1,8 @@
 import React, { createContext, useState, useMemo, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginUser } from '../api/hyperledger'; // We will create this API function
+import { auth, db } from '../../firebaseConfig'; // Make sure this path is correct
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const AuthContext = createContext();
 
@@ -10,53 +12,51 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [hasOnboarded, setHasOnboarded] = useState(false);
 
-    useEffect(() => {
-      const bootstrapAsync = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          const role = await AsyncStorage.getItem('userRole');
-          // --- CHECK ONBOARDING STATUS ---
-          const onboarded = await AsyncStorage.getItem('hasOnboarded');
+  useEffect(() => {
+    // This listener is the core of the authentication state.
+    // It automatically updates when the user logs in or out via Firebase.
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in, so we get their role from Firestore.
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
 
-          if (token && role) {
-            setUserToken(token);
-            setUserRole(role);
-          }
-          if (onboarded === 'true') {
-            setHasOnboarded(true);
-          }
-        } catch (e) {
-          console.error('Restoring state failed', e);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setUserToken(user.uid);
+          setUserRole(userData.role); // Set the role from Firestore
+        } else {
+          // This case handles if a user exists in Auth but not in Firestore.
+          // Log them out to be safe.
+          await auth.signOut();
         }
-        setIsLoading(false);
-      };
-      bootstrapAsync();
-    }, []);
+      } else {
+        // User is signed out.
+        setUserToken(null);
+        setUserRole(null);
+      }
+
+      // We still check the onboarding status from AsyncStorage.
+      const onboarded = await AsyncStorage.getItem('hasOnboarded');
+      if (onboarded === 'true') {
+        setHasOnboarded(true);
+      }
+
+      setIsLoading(false);
+    });
+
+    // Unsubscribe from the listener when the component unmounts.
+    return unsubscribe;
+  }, []);
 
   const authContextValue = useMemo(() => ({
-    signIn: async (email, password, role) => {
-      // No need to set isLoading here for a smoother transition
-      try {
-        const fakeToken = 'dummy-auth-token';
-        await AsyncStorage.setItem('userToken', fakeToken);
-        await AsyncStorage.setItem('userRole', role);
-        setUserToken(fakeToken);
-        setUserRole(role);
-      } catch (error) {
-        console.error('Sign in failed:', error);
-      }
-    },
+    // The signIn function is no longer needed here because the listener handles it.
+    // We keep it in the context for legacy reasons if other components call it, but it does nothing.
+    signIn: () => {},
     signOut: async () => {
-      // No need to set isLoading here
-      try {
-        await AsyncStorage.removeItem('userToken');
-        await AsyncStorage.removeItem('userRole');
-      } catch (error) {
-        console.error('Sign out failed:', error);
-      }
-      // Set tokens to null AFTER storage is cleared
-      setUserToken(null);
-      setUserRole(null);
+      // The only job of signOut is to tell Firebase to sign out.
+      // The listener above will handle clearing the state.
+      await auth.signOut();
     },
     completeOnboarding: async () => {
       try {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     userToken,
     userRole,
     isLoading,
-    hasOnboarded, // --- EXPOSE NEW STATE ---
+    hasOnboarded,
   }), [userToken, userRole, isLoading, hasOnboarded]);
 
   return (
