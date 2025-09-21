@@ -14,6 +14,8 @@ import AuthScreen from '../screens/common/AuthScreen';
 import ProfileScreen from '../screens/common/ProfileScreen';
 import QRScanScreen from '../screens/common/QRScanScreen';
 import BatchDetailsScreen from '../screens/common/BatchDetailsScreen';
+import UpdateBatchScreen from '../screens/common/UpdateBatchScreen';
+import DisputeDetailsScreen from '../screens/common/DisputeDetailsScreen';
 
 // Import all Role-Specific Screens
 import FarmerHomeScreen from '../screens/farmer/FarmerHomeScreen';
@@ -146,6 +148,16 @@ export default function AppNavigator() {
                 headerShown: true, // This makes the header and back arrow visible
                 title: 'Produce Journey'
               }}
+            />
+            <Stack.Screen 
+              name="UpdateBatch" 
+              component={UpdateBatchScreen} 
+              options={{ headerShown: true, title: 'Update Batch Info' }}
+            />
+            <Stack.Screen 
+              name="DisputeDetails" 
+              component={DisputeDetailsScreen} 
+              options={{ headerShown: true, title: 'Dispute Details' }}
             />
             <Stack.Screen 
               name="AddProduce" 
