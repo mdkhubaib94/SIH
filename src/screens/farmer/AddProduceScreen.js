@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native'; // Import Alert
 import { Button, TextInput, Title } from 'react-native-paper';
 
 export default function AddProduceScreen({ navigation }) {
@@ -8,10 +8,19 @@ export default function AddProduceScreen({ navigation }) {
   const [price, setPrice] = useState('');
 
   const handleAddProduce = () => {
+    if (!cropName || !quantity || !price) {
+      Alert.alert('Incomplete Form', 'Please fill out all fields.');
+      return;
+    }
     // TODO: Call API to add produce to the blockchain
     console.log({ cropName, quantity, price });
-    // Go back to the home screen after adding
-    navigation.goBack();
+    
+    // --- CHANGE: Show success message and go back ---
+    Alert.alert(
+      'Success!',
+      'A new batch has been created and a QR code is ready on the QR Codes tab.',
+      [{ text: 'OK', onPress: () => navigation.goBack() }]
+    );
   };
 
   return (

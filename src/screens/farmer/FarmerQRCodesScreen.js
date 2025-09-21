@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View, TouchableOpacity } from 'react-native'; // 1. Import TouchableOpacity
+import { FlatList, StyleSheet, View, TouchableOpacity, Alert } from 'react-native'; // 1. Import TouchableOpacity
 import { Card, Text, Button } from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -16,8 +16,12 @@ export default function FarmerQRCodesScreen({ navigation }) {
     navigation.navigate('BatchDetails', { batchId: batchId });
   };
 
+  const handleShare = () => {
+    // In a real app, this would use React Native's Share API
+    Alert.alert('Share / Print', 'This would open the native share dialog.');
+  };
+
   const renderItem = ({ item }) => (
-    // 3. Wrap the Card in a TouchableOpacity to make it tappable
     <TouchableOpacity onPress={() => handleViewDetails(item.id)}>
       <Card style={styles.card}>
         <Card.Title title={item.crop} subtitle={`Quantity: ${item.quantity}`} />
@@ -28,7 +32,8 @@ export default function FarmerQRCodesScreen({ navigation }) {
             <Button 
               icon="share-variant" 
               style={{marginTop: 10}} 
-              onPress={() => console.log('Share QR')}
+              // --- CHANGE: Added functional onPress ---
+              onPress={handleShare}
             >
               Share / Print
             </Button>

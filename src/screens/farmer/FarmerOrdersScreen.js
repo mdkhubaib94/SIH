@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, Alert } from 'react-native';
 import { Card, Text, Button, Avatar } from 'react-native-paper';
 
 const MOCK_ORDERS = [
@@ -8,6 +8,16 @@ const MOCK_ORDERS = [
 ];
 
 export default function FarmerOrdersScreen() {
+  const handleAccept = (item) => {
+    Alert.alert('Order Accepted', `You have accepted the order for ${item.crop} from ${item.from}.`);
+    // TODO: Add API call to update order status
+  };
+
+  const handleReject = (item) => {
+    Alert.alert('Order Rejected', `You have rejected the order for ${item.crop}.`);
+     // TODO: Add API call to update order status
+  };
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Title
@@ -16,8 +26,9 @@ export default function FarmerOrdersScreen() {
         left={(props) => <Avatar.Icon {...props} icon="store" />}
       />
       <Card.Actions>
-        <Button onPress={() => console.log('Accept')}>Accept</Button>
-        <Button onPress={() => console.log('Reject')}>Reject</Button>
+        {/* --- CHANGE: Added functional onPress --- */}
+        <Button onPress={() => handleAccept(item)}>Accept</Button>
+        <Button onPress={() => handleReject(item)}>Reject</Button>
       </Card.Actions>
     </Card>
   );

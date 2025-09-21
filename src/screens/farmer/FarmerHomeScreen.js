@@ -12,6 +12,7 @@ export default function FarmerHomeScreen({ navigation }) {
           <Button
             icon="plus-circle"
             mode="contained"
+            // --- CHANGE: Navigates to the form screen ---
             onPress={() => navigation.navigate('AddProduce')}
             style={styles.button}
           >
@@ -20,7 +21,8 @@ export default function FarmerHomeScreen({ navigation }) {
           <Button
             icon="qrcode"
             mode="outlined"
-            onPress={() => navigation.navigate('QR Codes')}
+            // --- CHANGE: Jumps to the correct tab ---
+            onPress={() => navigation.jumpTo('QR Codes')}
             style={styles.button}
           >
             View Generated QR Codes
@@ -33,7 +35,8 @@ export default function FarmerHomeScreen({ navigation }) {
           <Text variant="titleLarge">Incoming Orders</Text>
           <Text>You have 3 new orders from aggregators.</Text>
           <Button
-            onPress={() => navigation.navigate('Orders')}
+            // --- CHANGE: Jumps to the correct tab ---
+            onPress={() => navigation.jumpTo('Orders')}
             style={styles.button}
           >
             View Orders
@@ -49,4 +52,4 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
   card: { marginBottom: 20 },
   button: { marginTop: 15 },
-}); 
+});
