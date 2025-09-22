@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, Platform, ImageBackground } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import { Button, Text, Switch } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { changeAppLanguage } from '../../i18n';
 
@@ -28,41 +28,17 @@ export default function RoleSelectionScreen({ navigation }) {
     navigation.navigate('Auth', { role });
   };
 
-  const handleLanguageChange = () => {
-    if (Platform.OS === 'web') {
-      const lang = window.confirm('Switch to Odia? Click Cancel for English') ? 'or' : 'en';
-      changeAppLanguage(lang);
-      setCurrentLang(lang);
-    } else {
-      Alert.alert(
-        t('selectLanguage'),
-        '',
-        [
-          {
-            text: 'English',
-            onPress: () => {
-              changeAppLanguage('en');
-              setCurrentLang('en');
-            },
-          },
-          {
-            text: 'ଓଡ଼ିଆ',
-            onPress: () => {
-              changeAppLanguage('or');
-              setCurrentLang('or');
-            },
-          },
-          { text: t('cancel'), style: 'cancel' },
-        ],
-        { cancelable: true }
-      );
-    }
+  const toggleLanguage = () => {
+    const newLang = currentLang === 'en' ? 'or' : 'en';
+    changeAppLanguage(newLang);
+    setCurrentLang(newLang);
   };
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <Text variant="headlineLarge" style={styles.title}>{t('whoAreYou')}</Text>
+        
         {roles.map((roleInfo) => (
           <Button
             key={roleInfo.role}
@@ -75,9 +51,13 @@ export default function RoleSelectionScreen({ navigation }) {
             {t(roleInfo.titleKey)}
           </Button>
         ))}
-        <Button mode="outlined" onPress={handleLanguageChange} style={styles.langButton}>
-          {currentLang === 'en' ? 'Switch to Odia' : 'Switch to English'}
-        </Button>
+
+        {/* Language Switch */}
+        <View style={styles.switchRow}>
+          <Text style={currentLang === 'en' ? styles.activeLang : styles.inactiveLang}>English</Text>
+          <Switch value={currentLang === 'or'} onValueChange={toggleLanguage} />
+          <Text style={currentLang === 'or' ? styles.activeLang : styles.inactiveLang}>ଓଡ଼ିଆ</Text>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -85,9 +65,30 @@ export default function RoleSelectionScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  overlay: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: 'rgba(255,255,255,0.7)' },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+  },
   title: { textAlign: 'center', marginBottom: 30 },
   button: { marginVertical: 10 },
   buttonContent: { height: 50 },
-  langButton: { marginTop: 20 },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  activeLang: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginHorizontal: 10,
+  },
+  inactiveLang: {
+    fontWeight: 'normal',
+    fontSize: 16,
+    marginHorizontal: 10,
+    opacity: 0.6,
+  },
 });
