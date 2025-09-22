@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, Platform } from 'react-native';
+// Import ImageBackground to set a background image
+import { View, StyleSheet, Alert, Platform, ImageBackground } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { changeAppLanguage } from '../../i18n';
@@ -12,6 +13,11 @@ const roles = [
   { titleKey: 'retailer', icon: 'store', role: 'Retailer' },
   { titleKey: 'consumer', icon: 'account-group', role: 'Consumer' },
 ];
+
+// --- CHANGE THIS ---
+// You can replace this URL with a link to your own background image.
+// Or you can use a local image with: const image = require('./path/to/your/image.png');
+const backgroundImage = { uri: 'https://media.istockphoto.com/id/187251869/photo/rice-crop.jpg?s=612x612&w=0&k=20&c=ATxHepv7IZ99NcNKkA7WyPsrsjorIubeV1uZbXboGag=' };
 
 export default function RoleSelectionScreen({ navigation }) {
   const { t, i18n } = useTranslation();
@@ -63,21 +69,7 @@ export default function RoleSelectionScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Language selector button */}
-      <Button
-        mode="text"
-        style={styles.languageButton}
-        onPress={handleLanguageChange}
-      >
-        🌐 {currentLang === 'en' ? 'English' : 'ଓଡ଼ିଆ'}
-      </Button>
-
-      {/* Title */}
-      <Text variant="headlineLarge" style={styles.title}>
-        {t('whoAreYou')}
-      </Text>
-
-      {/* Role buttons */}
+      <Text variant="headlineLarge" style={styles.title}>Who are you?</Text>
       {roles.map((roleInfo) => (
         <Button
           key={roleInfo.role}
@@ -87,7 +79,7 @@ export default function RoleSelectionScreen({ navigation }) {
           style={styles.button}
           contentStyle={styles.buttonContent}
         >
-          {t(roleInfo.titleKey)}
+          {roleInfo.title}
         </Button>
       ))}
     </View>
@@ -99,5 +91,4 @@ const styles = StyleSheet.create({
   title: { textAlign: 'center', marginBottom: 30 },
   button: { marginVertical: 10 },
   buttonContent: { height: 50 },
-  languageButton: { position: 'absolute', top: 40, right: 20 },
 });
