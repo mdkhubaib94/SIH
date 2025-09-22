@@ -1,5 +1,3 @@
-// screens/common/AuthScreen.js
-
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, TextInput, Text, SegmentedButtons } from 'react-native-paper';

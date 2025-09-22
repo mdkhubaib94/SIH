@@ -16,11 +16,12 @@ import QRScanScreen from '../screens/common/QRScanScreen';
 import BatchDetailsScreen from '../screens/common/BatchDetailsScreen';
 import UpdateBatchScreen from '../screens/common/UpdateBatchScreen';
 import DisputeDetailsScreen from '../screens/common/DisputeDetailsScreen';
+import ConsumerEntryScreen from '../screens/consumer/ConsumerEntryScreen';
+import RetailerDetailsScreen from '../screens/consumer/RetailerDetailsScreen';
 
 // Import all Role-Specific Screens
 import FarmerHomeScreen from '../screens/farmer/FarmerHomeScreen';
 import FarmerQRCodesScreen from '../screens/farmer/FarmerQRCodesScreen';
-import AddProduceScreen from '../screens/farmer/AddProduceScreen';
 import FarmerOrdersScreen from '../screens/farmer/FarmerOrdersScreen';
 import AggregatorHomeScreen from '../screens/aggregator/AggregatorHomeScreen';
 import AggregatorTransactionsScreen from '../screens/aggregator/AggregatorTransactionsScreen';
@@ -31,6 +32,7 @@ import RetailerHomeScreen from '../screens/retailer/RetailerHomeScreen';
 import RetailerInventoryScreen from '../screens/retailer/RetailerInventoryScreen';
 import ConsumerOrdersScreen from '../screens/consumer/ConsumerOrdersScreen';
 import ConsumerSupportFarmerScreen from '../screens/consumer/ConsumerSupportFarmerScreen';
+import AddProduceScreen from '../screens/farmer/AddProduceScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -106,69 +108,93 @@ const AppTabs = ({ userRole }) => {
     }
 }
 
+// --- NEW NAVIGATOR FOR THE PUBLIC CONSUMER FLOW ---
+function ConsumerStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="ConsumerEntry" 
+        component={ConsumerEntryScreen} 
+        options={{ title: 'Consumer Portal' }}
+      />
+      <Stack.Screen 
+        name="RetailerDetails" 
+        component={RetailerDetailsScreen} 
+        options={{ title: "Retailer's Products" }}
+      />
+      <Stack.Screen 
+        name="QRScan" 
+        component={QRScanScreen} 
+        options={{ title: 'Scan Product' }}
+      />
+      <Stack.Screen 
+        name="BatchDetails" 
+        component={BatchDetailsScreen} 
+        options={{ title: 'Produce Journey' }}
+      />
+    </Stack.Navigator>
+  );
+}
 // --- FINAL ROOT NAVIGATOR ---
 
 export default function AppNavigator() {
+  // Get the hasOnboarded state from our context
   const { isLoading, userToken, userRole, hasOnboarded } = useContext(AuthContext);
+
+  // We are removing the Consumer case from the logged-in AppTabs
+  const AppTabs = ({ userRole }) => {
+    switch (userRole) {
+        case 'Farmer':      return <FarmerTabs />;
+        case 'Aggregator':  return <AggregatorTabs />;
+        case 'Transporter': return <TransporterTabs />;
+        case 'Retailer':    return <RetailerTabs />;
+        default:            return null; // Consumer no longer has a logged-in dashboard
+    }
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isLoading ? (
-          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }}/>
-        ) : userToken == null ? (
-          // --- THIS IS THE KEY LOGIC CHANGE ---
-          // If the user has NOT onboarded yet, show Onboarding first.
-          // Otherwise, go straight to RoleSelection.
-          hasOnboarded ? (
-            <>
-              <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Auth" component={AuthScreen} options={({ route }) => ({ title: `${route.params.role} - Login/Register`, headerShown: true, })} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Auth" component={AuthScreen} options={({ route }) => ({ title: `${route.params.role} - Login/Register`, headerShown: true, })} />
-            </>
-          )
-        ) : (
-          // State 3: User is logged in
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : userToken ? (
+          // When LOGGED IN, show the authenticated stack
           <>
-            {/* The main screen is the user's tab-based dashboard */}
             <Stack.Screen name="AppTabs" options={{ headerShown: false }}>
               {() => <AppTabs userRole={userRole} />}
             </Stack.Screen>
 
-            {/* Any screen you navigate to from the dashboard lives in the same stack */}
             <Stack.Screen
               name="BatchDetails"
               component={BatchDetailsScreen}
-              options={{
-                headerShown: true, // This makes the header and back arrow visible
-                title: 'Produce Journey'
-              }}
+              options={{ headerShown: true, title: 'Produce Journey' }}
             />
-            <Stack.Screen 
-              name="UpdateBatch" 
-              component={UpdateBatchScreen} 
-              options={{ headerShown: true, title: 'Update Batch Info' }}
+            
+            {/* --- ADD THIS SCREEN DEFINITION --- */}
+            <Stack.Screen
+              name="AddProduce"
+              component={AddProduceScreen}
+              options={{ headerShown: true, title: 'Add New Produce' }}
             />
-            <Stack.Screen 
-              name="DisputeDetails" 
-              component={DisputeDetailsScreen} 
-              options={{ headerShown: true, title: 'Dispute Details' }}
-            />
-            <Stack.Screen 
-              name="AddProduce" 
-              component={AddProduceScreen} 
-              options={{ 
-                headerShown: true, // This enables the header and back button
-                title: 'Add Produce' 
-              }}
-            />
-            {/* You can add more full-screen pages here, e.g., an "Edit Profile" screen */}
           </>
+        ) : (
+          // When LOGGED OUT, show the onboarding/auth/consumer flows
+          hasOnboarded ? (
+            // If they have, the stack starts with RoleSelection
+            <>
+              <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} />
+              <Stack.Screen name="Auth" component={AuthScreen} options={({ route }) => ({ title: `${route.params.role} - Login/Register`, headerShown: true, })}/>
+              <Stack.Screen name="ConsumerFlow" component={ConsumerStack} />
+            </>
+          ) : (
+            // If they haven't, the stack starts with Onboarding
+            <>
+              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+              <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} />
+              <Stack.Screen name="Auth" component={AuthScreen} options={({ route }) => ({ title: `${route.params.role} - Login/Register`, headerShown: true, })}/>
+              <Stack.Screen name="ConsumerFlow" component={ConsumerStack} />
+            </>
+          )
         )}
       </Stack.Navigator>
     </NavigationContainer>

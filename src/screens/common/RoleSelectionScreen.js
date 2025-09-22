@@ -18,7 +18,13 @@ const backgroundImage = { uri: 'https://media.istockphoto.com/id/187251869/photo
 
 export default function RoleSelectionScreen({ navigation }) {
   const handleSelectRole = (role) => {
-    navigation.navigate('Auth', { role });
+    if (role === 'Consumer') {
+      // If consumer, navigate to the new unauthenticated flow
+      navigation.navigate('ConsumerFlow');
+    } else {
+      // For all other roles, go to the login/register screen
+      navigation.navigate('Auth', { role });
+    }
   };
 
   return (
