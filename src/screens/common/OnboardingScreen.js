@@ -1,24 +1,24 @@
-import React, { useContext } from 'react'; // Import useContext
+import React, { useContext } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Text } from 'react-native-paper';
-import { AuthContext } from '../../store/AuthContext'; // Import AuthContext
+import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../../store/AuthContext';
 
 const { width } = Dimensions.get('window');
 
-const slides = [
-  { key: '1', title: 'Track your food from farm to fork.', text: 'Complete visibility into the journey of your produce.' },
-  { key: '2', title: 'Fair pricing for farmers, trust for consumers.', text: 'Blockchain ensures every transaction is secure and transparent.' },
-  { key: '3', title: 'Blockchain-secured, transparent, and simple.', text: 'Scan a QR code to begin the journey.' },
-];
-
 export default function OnboardingScreen({ navigation }) {
   const { completeOnboarding } = useContext(AuthContext);
+  const { t } = useTranslation();
+
+  const slides = [
+    { key: '1', title: t('onboardingSlide1Title'), text: t('onboardingSlide1Text') },
+    { key: '2', title: t('onboardingSlide2Title'), text: t('onboardingSlide2Text') },
+    { key: '3', title: t('onboardingSlide3Title'), text: t('onboardingSlide3Text') },
+  ];
 
   const handleGetStarted = () => {
-    // Call the function to set the flag
     completeOnboarding();
-    // Then navigate as usual
     navigation.replace('RoleSelection');
   };
 
@@ -46,7 +46,7 @@ export default function OnboardingScreen({ navigation }) {
         onPress={handleGetStarted} 
         style={styles.button}
       >
-        Get Started
+        {t('getStarted')}
       </Button>
     </View>
   );

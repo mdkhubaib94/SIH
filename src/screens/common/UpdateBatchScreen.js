@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Button, TextInput, Title, Text } from 'react-native-paper';
-// import { updateBatchStatus } from '../../api/hyperledger'; // You would import your API function
+import { useTranslation } from 'react-i18next';
+// import { updateBatchStatus } from '../../api/hyperledger'; // Uncomment when API exists
 
 export default function UpdateBatchScreen({ route, navigation }) {
-  // The batchId and userRole would be passed from the previous screen (e.g., QRScanScreen)
+  const { t } = useTranslation();
   const { batchId, userRole } = route.params;
 
   const [updateInfo, setUpdateInfo] = useState('');
@@ -13,31 +14,29 @@ export default function UpdateBatchScreen({ route, navigation }) {
   const getLabel = () => {
     switch (userRole) {
       case 'Aggregator':
-        return 'Quality Grade / Storage Info';
+        return t('aggregatorUpdateLabel');
       case 'Transporter':
-        return 'Delivery Log / Vehicle Info';
+        return t('transporterUpdateLabel');
       case 'Retailer':
-        return 'Stocking Notes / Display Location';
+        return t('retailerUpdateLabel');
       default:
-        return 'Update Information';
+        return t('defaultUpdateLabel');
     }
   };
 
   const handleUpdate = async () => {
     if (!updateInfo) {
-      Alert.alert('Error', 'Please enter information to update.');
+      Alert.alert(t('error'), t('enterUpdateInfo'));
       return;
     }
     setLoading(true);
     try {
-      // In a real app, you would call your API here
       // await updateBatchStatus(batchId, { status: `${userRole} Update`, metadata: updateInfo });
-      
       console.log(`Updating batch ${batchId} with info: ${updateInfo}`);
-      Alert.alert('Success', 'Batch information has been updated on the blockchain.');
+      Alert.alert(t('success'), t('updateSuccess'));
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Update Failed', 'Could not update the batch information.');
+      Alert.alert(t('updateFailed'), t('updateFailedMessage'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -46,8 +45,8 @@ export default function UpdateBatchScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Update Batch: {batchId}</Title>
-      <Text style={styles.subtitle}>Your Role: {userRole}</Text>
+      <Title style={styles.title}>{t('updateBatchTitle', { batchId })}</Title>
+      <Text style={styles.subtitle}>{t('yourRole', { role: userRole })}</Text>
       <TextInput
         label={getLabel()}
         value={updateInfo}
@@ -63,7 +62,7 @@ export default function UpdateBatchScreen({ route, navigation }) {
         disabled={loading}
         style={styles.button}
       >
-        Submit Update
+        {t('submitUpdate')}
       </Button>
     </View>
   );

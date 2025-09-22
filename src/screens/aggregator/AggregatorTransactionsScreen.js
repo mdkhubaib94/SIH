@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { Card, Text, Avatar, Chip } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 const MOCK_TRANSACTIONS = [
   { id: 'T1', batchId: 'BATCH_WHEAT_001', from: 'John\'s Farm', status: 'Forwarded to Transporter', date: '2025-09-16' },
@@ -9,16 +10,18 @@ const MOCK_TRANSACTIONS = [
 ];
 
 export default function AggregatorTransactionsScreen() {
+  const { t } = useTranslation();
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Title
-        title={`Batch: ${item.batchId}`}
-        subtitle={`From: ${item.from}`}
+        title={`${t('batch')}: ${item.batchId}`}
+        subtitle={`${t('from')}: ${item.from}`}
         left={(props) => <Avatar.Icon {...props} icon="receipt" />}
       />
       <Card.Content>
-        <Chip icon="information" style={styles.chip}>{item.status}</Chip>
-        <Text style={styles.dateText}>Date: {item.date}</Text>
+        <Chip icon="information" style={styles.chip}>{t(item.status)}</Chip>
+        <Text style={styles.dateText}>{t('date')}: {item.date}</Text>
       </Card.Content>
     </Card>
   );
@@ -29,7 +32,7 @@ export default function AggregatorTransactionsScreen() {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.container}
-      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>Transaction History</Text>}
+      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>{t('transactionHistory')}</Text>}
     />
   );
 }

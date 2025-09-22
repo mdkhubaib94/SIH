@@ -1,25 +1,28 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { Card, Text, Avatar, Button } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 const MOCK_INVENTORY = [
   { id: 'I1', item: 'Organic Tomatoes', quantity: '50kg', origin: 'Sunnyside Acres' },
-  { id: 'I2', item: 'Whole Wheat Flour', quantity: '200kg', origin: 'John\'s Farm' },
+  { id: 'I2', item: 'Whole Wheat Flour', quantity: '200kg', origin: "John's Farm" },
 ];
 
 export default function RetailerInventoryScreen() {
+  const { t } = useTranslation();
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Title
         title={item.item}
-        subtitle={`Origin: ${item.origin}`}
+        subtitle={`${t('origin')}: ${item.origin}`}
         left={(props) => <Avatar.Icon {...props} icon="package-variant-closed" />}
       />
-       <Card.Content>
-        <Text>Stock Quantity: {item.quantity}</Text>
+      <Card.Content>
+        <Text>{t('stockQuantity')}: {item.quantity}</Text>
       </Card.Content>
       <Card.Actions>
-        <Button onPress={() => console.log('Update Packaging')}>Update Info</Button>
+        <Button onPress={() => console.log('Update Packaging')}>{t('updateInfo')}</Button>
       </Card.Actions>
     </Card>
   );
@@ -30,7 +33,7 @@ export default function RetailerInventoryScreen() {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.container}
-      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>Store Inventory</Text>}
+      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>{t('storeInventory')}</Text>}
     />
   );
 }

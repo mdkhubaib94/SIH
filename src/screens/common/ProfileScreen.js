@@ -1,10 +1,11 @@
-import React, { useContext } from 'react'; // 1. Import useContext
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Button, Card, Text, Title, List } from 'react-native-paper';
-import { AuthContext } from '../../store/AuthContext'; // 2. Import AuthContext
+import { AuthContext } from '../../store/AuthContext';
+import { useTranslation } from 'react-i18next'; // Added for translations
 
 export default function ProfileScreen({ navigation }) {
-  // 3. Get the signOut function from our context
+  const { t } = useTranslation(); // Initialize translation
   const { signOut, userRole } = useContext(AuthContext);
 
   // In a real app, user data would come from context or props
@@ -16,24 +17,24 @@ export default function ProfileScreen({ navigation }) {
         <Card.Content style={styles.profileHeader}>
           <Avatar.Icon size={80} icon="account" />
           <Title style={styles.name}>{user.name}</Title>
-          <Text>{user.role}</Text>
+          <Text>{t(user.role.toLowerCase())}</Text> {/* translate role */}
         </Card.Content>
       </Card>
 
-      <List.Section style={{marginTop: 20}}>
-        <List.Subheader>Account Information</List.Subheader>
+      <List.Section style={{ marginTop: 20 }}>
+        <List.Subheader>{t('accountInformation')}</List.Subheader>
         <List.Item
-          title="Email"
+          title={t('email')}
           description={user.email}
           left={() => <List.Icon icon="email" />}
         />
         <List.Item
-          title="Wallet Balance"
+          title={t('walletBalance')}
           description="0.45 ETH" // Placeholder
           left={() => <List.Icon icon="wallet" />}
         />
         <List.Item
-          title="Edit Profile"
+          title={t('editProfile')}
           left={() => <List.Icon icon="pencil" />}
           onPress={() => console.log('Navigate to Edit Profile')}
         />
@@ -41,11 +42,11 @@ export default function ProfileScreen({ navigation }) {
 
       <Button
         mode="contained"
-        onPress={signOut} // 4. Call the actual signOut function
+        onPress={signOut}
         style={styles.logoutButton}
         icon="logout"
       >
-        Logout
+        {t('logout')}
       </Button>
     </View>
   );

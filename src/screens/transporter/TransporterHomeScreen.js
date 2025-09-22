@@ -1,34 +1,39 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text, Card, Title } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 export default function TransporterHomeScreen({ navigation }) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Transporter Dashboard</Title>
+      <Title style={styles.title}>{t('transporterDashboard')}</Title>
+
       <Card style={styles.card}>
         <Card.Content style={styles.cardContent}>
-          <Text variant="titleLarge">Manage Shipments</Text>
-          <Text style={styles.subText}>Scan a batch's QR code to begin transport or mark it as delivered.</Text>
+          <Text variant="titleLarge">{t('manageShipments')}</Text>
+          <Text style={styles.subText}>{t('scanBatchInstructions')}</Text>
           <Button
             icon="qrcode-scan"
             mode="contained"
             onPress={() => navigation.navigate('QR Scan')}
             style={styles.button}
           >
-            Scan Batch QR Code
+            {t('scanBatchQR')}
           </Button>
         </Card.Content>
       </Card>
-       <Card style={styles.card}>
+
+      <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleLarge">Active Shipments</Text>
-          <Text>You have 2 active shipments in transit.</Text>
+          <Text variant="titleLarge">{t('activeShipments')}</Text>
+          <Text>{t('activeShipmentsCount', { count: 2 })}</Text>
           <Button
             onPress={() => navigation.navigate('Shipments')}
             style={styles.button}
           >
-            View Shipments
+            {t('viewShipments')}
           </Button>
         </Card.Content>
       </Card>

@@ -1,52 +1,58 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native'; // Import Alert
+import { View, StyleSheet, Alert } from 'react-native';
 import { Button, TextInput, Title } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 export default function AddProduceScreen({ navigation }) {
+  const { t } = useTranslation();
+
   const [cropName, setCropName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
 
   const handleAddProduce = () => {
     if (!cropName || !quantity || !price) {
-      Alert.alert('Incomplete Form', 'Please fill out all fields.');
+      Alert.alert(t('incompleteForm'), t('fillAllFields'));
       return;
     }
     // TODO: Call API to add produce to the blockchain
     console.log({ cropName, quantity, price });
-    
-    // --- CHANGE: Show success message and go back ---
+
     Alert.alert(
-      'Success!',
-      'A new batch has been created and a QR code is ready on the QR Codes tab.',
-      [{ text: 'OK', onPress: () => navigation.goBack() }]
+      t('success'),
+      t('produceBatchCreated'),
+      [{ text: t('ok'), onPress: () => navigation.goBack() }]
     );
   };
 
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Add New Produce Batch</Title>
+      <Title style={styles.title}>{t('addNewProduce')}</Title>
       <TextInput
-        label="Crop Name (e.g., Wheat)"
+        label={t('cropNameExample')}
         value={cropName}
         onChangeText={setCropName}
         style={styles.input}
       />
       <TextInput
-        label="Quantity (e.g., 500kg)"
+        label={t('quantityExample')}
         value={quantity}
         onChangeText={setQuantity}
         style={styles.input}
       />
       <TextInput
-        label="Price per unit"
+        label={t('pricePerUnit')}
         value={price}
         onChangeText={setPrice}
         keyboardType="numeric"
         style={styles.input}
       />
-      <Button mode="contained" onPress={handleAddProduce} style={styles.button}>
-        Generate Batch on Blockchain
+      <Button
+        mode="contained"
+        onPress={handleAddProduce}
+        style={styles.button}
+      >
+        {t('generateBatch')}
       </Button>
     </View>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, Alert } from 'react-native';
 import { Card, Text, Button, Avatar } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 const MOCK_ORDERS = [
   { id: 'ORD_1', from: 'Central Mandi', crop: 'Wheat (500kg)', status: 'Pending' },
@@ -8,14 +9,16 @@ const MOCK_ORDERS = [
 ];
 
 export default function FarmerOrdersScreen() {
+  const { t } = useTranslation();
+
   const handleAccept = (item) => {
-    Alert.alert('Order Accepted', `You have accepted the order for ${item.crop} from ${item.from}.`);
+    Alert.alert(t('orderAccepted'), t('acceptedOrderMessage', { crop: item.crop, from: item.from }));
     // TODO: Add API call to update order status
   };
 
   const handleReject = (item) => {
-    Alert.alert('Order Rejected', `You have rejected the order for ${item.crop}.`);
-     // TODO: Add API call to update order status
+    Alert.alert(t('orderRejected'), t('rejectedOrderMessage', { crop: item.crop }));
+    // TODO: Add API call to update order status
   };
 
   const renderItem = ({ item }) => (
@@ -26,9 +29,8 @@ export default function FarmerOrdersScreen() {
         left={(props) => <Avatar.Icon {...props} icon="store" />}
       />
       <Card.Actions>
-        {/* --- CHANGE: Added functional onPress --- */}
-        <Button onPress={() => handleAccept(item)}>Accept</Button>
-        <Button onPress={() => handleReject(item)}>Reject</Button>
+        <Button onPress={() => handleAccept(item)}>{t('accept')}</Button>
+        <Button onPress={() => handleReject(item)}>{t('reject')}</Button>
       </Card.Actions>
     </Card>
   );
@@ -39,7 +41,7 @@ export default function FarmerOrdersScreen() {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.container}
-      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>Incoming Orders</Text>}
+      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>{t('incomingOrders')}</Text>}
     />
   );
 }

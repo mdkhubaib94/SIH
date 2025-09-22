@@ -1,45 +1,45 @@
 import { StyleSheet, View } from 'react-native';
 import { Button, Card, Text, Title } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 export default function FarmerHomeScreen({ navigation }) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Farmer Dashboard</Title>
+      <Title style={styles.title}>{t('farmerDashboard')}</Title>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleLarge">Manage Your Produce</Text>
+          <Text variant="titleLarge">{t('manageProduce')}</Text>
           <Button
             icon="plus-circle"
             mode="contained"
-            // --- CHANGE: Navigates to the form screen ---
             onPress={() => navigation.navigate('AddProduce')}
             style={styles.button}
           >
-            Add New Produce
+            {t('addNewProduce')}
           </Button>
           <Button
             icon="qrcode"
             mode="outlined"
-            // --- CHANGE: Jumps to the correct tab ---
             onPress={() => navigation.jumpTo('QR Codes')}
             style={styles.button}
           >
-            View Generated QR Codes
+            {t('viewGeneratedQRCodes')}
           </Button>
         </Card.Content>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleLarge">Incoming Orders</Text>
-          <Text>You have 3 new orders from aggregators.</Text>
+          <Text variant="titleLarge">{t('incomingOrders')}</Text>
+          <Text>{t('newOrdersMessage', { count: 3 })}</Text>
           <Button
-            // --- CHANGE: Jumps to the correct tab ---
             onPress={() => navigation.jumpTo('Orders')}
             style={styles.button}
           >
-            View Orders
+            {t('viewOrders')}
           </Button>
         </Card.Content>
       </Card>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Card, Text, Title } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 import { getBatchHistory } from '../../api/hyperledger'; // Assuming this API function exists
 
 export default function BatchDetailsScreen({ route }) {
+  const { t } = useTranslation();
   const { batchId } = route.params;
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState(null);
@@ -13,12 +15,11 @@ export default function BatchDetailsScreen({ route }) {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        // Call your API to get the data for the scanned batch ID
         const data = await getBatchHistory(batchId);
         setHistory(data);
         setError('');
       } catch (err) {
-        setError('Failed to fetch batch details. Please try again.');
+        setError(t('failedFetchBatch')); // translated error
         console.error(err);
       } finally {
         setLoading(false);
@@ -26,27 +27,38 @@ export default function BatchDetailsScreen({ route }) {
     };
     
     fetchHistory();
-  }, [batchId]);
+  }, [batchId, t]);
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator animating={true} size="large" /></View>;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator animating={true} size="large" />
+      </View>
+    );
   }
 
   if (error) {
-    return <View style={styles.center}><Text>{error}</Text></View>;
+    return (
+      <View style={styles.center}>
+        <Text>{error}</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Title style={styles.header}>Journey for Batch: {batchId}</Title>
+      <Title style={styles.header}>
+        {t('journeyForBatch', { batchId })}
+      </Title>
       {history ? (
-         // In a real app, you would use a FlatList to render the journey timeline
         <Card>
           <Card.Content>
-            <Text>Here you would display the full timeline of the product from the 'history' state variable.</Text>
+            <Text>{t('batchHistoryPlaceholder')}</Text>
           </Card.Content>
         </Card>
-      ) : <Text>No history found for this batch.</Text>}
+      ) : (
+        <Text>{t('noHistoryFound')}</Text>
+      )}
     </View>
   );
 }
