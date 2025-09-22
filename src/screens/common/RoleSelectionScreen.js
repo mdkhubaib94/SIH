@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   // and a subtle border to create a "frosted glass" effect.
   glassContainer: {
     // Increased the alpha value from 0.4 to 0.6 to make it more opaque
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     fontWeight: 'bold',
-    color: '#02470fff',
+    color: '#167028ff',
     fontSize: 42, // Made the font larger
     fontFamily: 'sans-serif', // Changed the font style (note: custom fonts require project setup)
   },
