@@ -1,33 +1,38 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text, Card, Title } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 export default function RetailerHomeScreen({ navigation }) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Retailer Dashboard</Title>
+      <Title style={styles.title}>{t('retailerDashboard')}</Title>
+
       <Card style={styles.card}>
         <Card.Content style={styles.cardContent}>
-          <Text variant="titleLarge">Verify Incoming Stock</Text>
-          <Text style={styles.subText}>Scan the QR code from the transporter to verify origin and purchase stock.</Text>
+          <Text variant="titleLarge">{t('verifyIncomingStock')}</Text>
+          <Text style={styles.subText}>{t('scanQRFromTransporterText')}</Text>
           <Button
             icon="qrcode-scan"
             mode="contained"
             onPress={() => navigation.navigate('QR Scan')}
             style={styles.button}
           >
-            Scan QR from Transporter
+            {t('scanQRFromTransporter')}
           </Button>
         </Card.Content>
       </Card>
+
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleLarge">Manage Inventory</Text>
-           <Button
+          <Text variant="titleLarge">{t('manageInventory')}</Text>
+          <Button
             onPress={() => navigation.navigate('Inventory')}
             style={styles.button}
           >
-            View Store Inventory
+            {t('viewStoreInventory')}
           </Button>
         </Card.Content>
       </Card>

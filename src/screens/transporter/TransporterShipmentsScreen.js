@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { Card, Text, Avatar, Button, Chip } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 const MOCK_SHIPMENTS = [
   { id: 'S1', batchId: 'BATCH_WHEAT_001', from: 'Central Mandi', to: 'Green Retail', status: 'In Transit' },
@@ -9,19 +10,21 @@ const MOCK_SHIPMENTS = [
 ];
 
 export default function TransporterShipmentsScreen() {
+  const { t } = useTranslation();
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Title
-        title={`Batch: ${item.batchId}`}
+        title={`${t('batch')}: ${item.batchId}`}
         subtitle={`${item.from} → ${item.to}`}
         left={(props) => <Avatar.Icon {...props} icon="truck-delivery" />}
       />
        <Card.Content>
-        <Chip icon="information" style={styles.chip}>{item.status}</Chip>
+        <Chip icon="information" style={styles.chip}>{t(item.status.replace(/\s+/g, ''))}</Chip>
       </Card.Content>
       <Card.Actions>
-        <Button onPress={() => console.log('Update Log')}>Add Delivery Log</Button>
-        <Button onPress={() => console.log('View Details')}>Details</Button>
+        <Button onPress={() => console.log('Update Log')}>{t('addDeliveryLog')}</Button>
+        <Button onPress={() => console.log('View Details')}>{t('details')}</Button>
       </Card.Actions>
     </Card>
   );
@@ -32,7 +35,7 @@ export default function TransporterShipmentsScreen() {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.container}
-      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>My Shipments</Text>}
+      ListHeaderComponent={<Text variant="headlineSmall" style={styles.header}>{t('myShipments')}</Text>}
     />
   );
 }

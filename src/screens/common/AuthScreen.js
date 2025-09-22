@@ -4,11 +4,13 @@ import { Button, TextInput, Text, SegmentedButtons } from 'react-native-paper';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from '../../../firebaseConfig';
-import { useAuth } from '../../store/AuthContext'; // Import the useAuth hook
+import { useAuth } from '../../store/AuthContext';
+import { useTranslation } from 'react-i18next'; // <-- import i18n
 
 export default function AuthScreen({ route }) {
   const { role } = route.params;
-  const { signIn } = useAuth(); // Get the new signIn function from the context
+  const { signIn } = useAuth();
+  const { t } = useTranslation(); // <-- use translation hook
 
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
@@ -19,33 +21,27 @@ export default function AuthScreen({ route }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setError('Please enter both email and password.');
+      setError(t('errorFillEmailPassword'));
       return;
     }
     setLoading(true);
     setError('');
 
     try {
-      // Call the centralized signIn function from the context.
-      // We pass it the credentials and the role this screen is for.
       await signIn(email, password, role);
-      // If it succeeds, the AuthContext listener and AppNavigator will handle the rest.
     } catch (err) {
-      // If signIn throws any error (wrong password, role mismatch, etc.),
-      // we catch it here and display it.
       if (err.message === 'Invalid credentials for this role.') {
-        setError(err.message);
+        setError(t('errorInvalidRole'));
       } else {
-        setError('Invalid email or password.');
+        setError(t('errorInvalidEmailPassword'));
       }
       setLoading(false);
     }
   };
 
   const handleRegister = async () => {
-    // Register logic can remain the same
     if (!email || !password || !name) {
-      setError('Please fill in all fields.');
+      setError(t('errorFillAllFields'));
       return;
     }
     setLoading(true);
@@ -59,8 +55,8 @@ export default function AuthScreen({ route }) {
         email: email,
         role: role,
       });
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -68,29 +64,34 @@ export default function AuthScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>Welcome, {role}!</Text>
+      <Text variant="headlineMedium" style={styles.title}>
+        {t('welcomeRole', { role })}
+      </Text>
+
       <SegmentedButtons
         value={mode}
         onValueChange={(value) => {
-            setMode(value);
-            setError('');
+          setMode(value);
+          setError('');
         }}
         buttons={[
-          { value: 'login', label: 'Login' },
-          { value: 'register', label: 'Register' },
+          { value: 'login', label: t('login') },
+          { value: 'register', label: t('register') },
         ]}
         style={{ marginBottom: 20 }}
       />
+
       {mode === 'register' && (
         <TextInput
-          label={role === 'Farmer' ? 'Farm Name' : 'Full Name'}
+          label={role === 'Farmer' ? t('farmName') : t('fullName')}
           value={name}
           onChangeText={setName}
           style={styles.input}
         />
       )}
+
       <TextInput
-        label="Email"
+        label={t('email')}
         value={email}
         onChangeText={(text) => {
           setEmail(text);
@@ -100,8 +101,9 @@ export default function AuthScreen({ route }) {
         autoCapitalize="none"
         style={styles.input}
       />
+
       <TextInput
-        label="Password"
+        label={t('password')}
         value={password}
         onChangeText={(text) => {
           setPassword(text);
@@ -110,7 +112,9 @@ export default function AuthScreen({ route }) {
         secureTextEntry
         style={styles.input}
       />
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
       <Button
         mode="contained"
         onPress={mode === 'login' ? handleLogin : handleRegister}
@@ -118,7 +122,7 @@ export default function AuthScreen({ route }) {
         loading={loading}
         disabled={loading}
       >
-        {mode === 'login' ? 'Login' : 'Create Account'}
+        {mode === 'login' ? t('login') : t('createAccount')}
       </Button>
     </View>
   );
